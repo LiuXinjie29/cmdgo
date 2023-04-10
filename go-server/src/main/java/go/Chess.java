@@ -5,7 +5,7 @@ package go;
  * @Author: LiuXinjie
  */
 public enum Chess {
-
+    NULL("+"),
     WHITE("*"),
     BLACK("#")
     ;

@@ -10,13 +10,9 @@ import java.util.StringJoiner;
  */
 public class Chessboard {
 
-    private final static String NULL_CONTENT = "+";
-
     private final static String CHESSBOARD_SEPARATOR = "  ";
 
     private final static String XY_SEPARATOR = ",";
-
-
 
     private Integer length;
 
@@ -35,7 +31,7 @@ public class Chessboard {
     private static void initChessboard(Chessboard chessboard) {
         chessboard.chessboard = new String[chessboard.length][chessboard.width];
         for (int i = 0; i < chessboard.chessboard.length; i++) {
-            Arrays.fill(chessboard.chessboard[i], NULL_CONTENT);
+            Arrays.fill(chessboard.chessboard[i], Chess.NULL.getCharacter());
         }
     }
 
@@ -52,7 +48,7 @@ public class Chessboard {
     String put(String x, String y, Chess chess) {
         int xAxis = (char)(x.charAt(0) - 'A');
         int yAxis = Integer.parseInt(y);
-        if (!chessboard[xAxis][yAxis].equals(NULL_CONTENT)) throw new RuntimeException("the axis already exists a chess");
+        if (!chessboard[xAxis][yAxis].equals(Chess.NULL.getCharacter())) throw new RuntimeException("the axis already exists a chess");
         chessboard[xAxis][yAxis] = chess.getCharacter();
         return this.print();
     }
