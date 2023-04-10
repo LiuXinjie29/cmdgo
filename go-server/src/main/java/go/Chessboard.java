@@ -18,7 +18,7 @@ public class Chessboard {
 
     private Integer width;
 
-    private String[][] chessboard;
+    private Chess[][] chessboard;
 
     static Chessboard build(Integer length, Integer width) {
         Chessboard chessboard = new Chessboard();
@@ -29,9 +29,9 @@ public class Chessboard {
     }
 
     private static void initChessboard(Chessboard chessboard) {
-        chessboard.chessboard = new String[chessboard.length][chessboard.width];
+        chessboard.chessboard = new Chess[chessboard.length][chessboard.width];
         for (int i = 0; i < chessboard.chessboard.length; i++) {
-            Arrays.fill(chessboard.chessboard[i], Chess.NULL.getCharacter());
+            Arrays.fill(chessboard.chessboard[i], NullChess.build());
         }
     }
 
@@ -39,17 +39,19 @@ public class Chessboard {
         return build(length, length);
     }
 
-    String put(String assemblyXY, Chess chess) {
+    String put(String assemblyXY, ChessColorEnum chessColorEnum) {
         String[] split = assemblyXY.split(XY_SEPARATOR);
         if (split.length != 2) throw new RuntimeException("wrong axis string");
-        return put(split[0], split[1], chess);
+        return put(split[0], split[1], chessColorEnum);
     }
 
-    String put(String x, String y, Chess chess) {
+    String put(String x, String y, ChessColorEnum color) {
         int xAxis = (char)(x.charAt(0) - 'A');
         int yAxis = Integer.parseInt(y);
-        if (!chessboard[xAxis][yAxis].equals(Chess.NULL.getCharacter())) throw new RuntimeException("the axis already exists a chess");
-        chessboard[xAxis][yAxis] = chess.getCharacter();
+        if (!(chessboard[xAxis][yAxis] instanceof NullChess)) {
+            throw new RuntimeException("the axis already exists a chess");
+        }
+        chessboard[xAxis][yAxis] = Chess.build(xAxis, yAxis, color);
         return this.print();
     }
 
@@ -73,7 +75,7 @@ public class Chessboard {
         for (int i = 0; i < this.width; i++) {
             lengthStr = new StringJoiner(CHESSBOARD_SEPARATOR);
             for (int j = 0; j < this.length; j++) {
-                lengthStr.add(chessboard[j][i]);
+                lengthStr.add(chessboard[j][i].getChessColor());
             }
             lengthStrList.add(lengthStr.toString());
         }

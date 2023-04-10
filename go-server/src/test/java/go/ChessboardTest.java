@@ -18,8 +18,8 @@ class ChessboardTest {
 
     @Test
     void putTest() {
-        chessboard.put("A", "03", Chess.WHITE);
-        chessboard.put("C", "2", Chess.BLACK);
+        chessboard.put("A", "03", ChessColorEnum.WHITE);
+        chessboard.put("C", "2", ChessColorEnum.BLACK);
         System.out.println(chessboard.print());
     }
 

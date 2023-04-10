@@ -4,19 +4,23 @@ package go;
  * @since: 2023/4/10.
  * @Author: LiuXinjie
  */
-public enum Chess {
-    NULL("+"),
-    WHITE("*"),
-    BLACK("#")
-    ;
+public class Chess {
 
-    private final String character;
+    private int xAxis;
 
-    Chess(String character) {
-        this.character = character;
+    private int yAxis;
+
+    ChessColorEnum color;
+
+    public static Chess build(int x, int y, ChessColorEnum color) {
+        Chess chess = new Chess();
+        chess.xAxis = x;
+        chess.yAxis = y;
+        chess.color = color;
+        return chess;
     }
 
-    public String getCharacter() {
-        return character;
+    String getChessColor() {
+        return this.color.getCharacter();
     }
 }
