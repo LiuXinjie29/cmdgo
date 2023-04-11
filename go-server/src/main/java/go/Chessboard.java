@@ -8,6 +8,7 @@ import java.util.*;
  */
 public class Chessboard {
 
+    //气Map
     private final Map<String, Set<String>> qiMap = new HashMap<>();
     //邻居子map
     private final Map<String, List<Chess>> aroundMap = new HashMap<>();
@@ -22,7 +23,7 @@ public class Chessboard {
 
     private Chess[][] chessboard;
 
-    static Chessboard build(Integer length, Integer width) {
+    public static Chessboard build(Integer length, Integer width) {
         Chessboard chessboard = new Chessboard();
         chessboard.length = length;
         chessboard.width = width;
@@ -57,7 +58,6 @@ public class Chessboard {
             throw new RuntimeException("the axis already exists a chess");
         }
         Chess curChess = Chess.build(xAxis, yAxis, color);
-        //----------------
 
         List<Chess>[] aroundSortList = getAroundSortList(curChess);
 
@@ -167,7 +167,7 @@ public class Chessboard {
     //获取指定点的棋子
     private Chess getChess(int x, int y) {
         //out range
-        if (x < 0 || x > 18 || y < 0 || y > 18) {
+        if (x < 0 || x > this.length - 1 || y < 0 || y > this.width - 1) {
             return null;
         }
         return chessboard[x][y];
@@ -206,18 +206,18 @@ public class Chessboard {
     }
 
     //棋子被移除调用次方法
-    private void onDeleteUpdate(Chess qizi) {
-        Chess[] arounds = getAroundList(qizi);
+    private void onDeleteUpdate(Chess chess) {
+        Chess[] arounds = getAroundList(chess);
         //颜色不同的棋子获得气
-        Chess finalQizi = qizi;
-        Arrays.stream(arounds).filter(item -> item != null && !ChessColorEnum.NULL.getCharacter().equals(item.getChessColor()) && !item.getChessColor().equals(finalQizi.getChessColor())).forEach(
+        Chess finalChess = chess;
+        Arrays.stream(arounds).filter(item -> item != null && !ChessColorEnum.NULL.getCharacter().equals(item.getChessColor()) && !item.getChessColor().equals(finalChess.getChessColor())).forEach(
                 item -> {
                     Set<String> qiSet = qiMap.get(item.getAroundTag());
-                    qiSet.add(finalQizi.getPointString());
+                    qiSet.add(finalChess.getPointString());
                 }
         );
-        chessboard[qizi.getxAxis()][qizi.getyAxis()] = NullChess.build(qizi.getxAxis(), qizi.getyAxis());
-        qizi = null;
+        chessboard[chess.getxAxis()][chess.getyAxis()] = NullChess.build(chess.getxAxis(), chess.getyAxis());
+        chess = null;
     }
 
     /**
