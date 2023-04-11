@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  */
 class ChessboardTest {
 
-    private static final Chessboard chessboard = Chessboard.build(3,4);
+    private static final Chessboard chessboard = Chessboard.buildQuadrate(5);
 
     @Test
     void printTest() {
@@ -17,10 +17,24 @@ class ChessboardTest {
     }
 
     @Test
-    void putTest() {
-        chessboard.put("A", "03", ChessColorEnum.WHITE);
-        chessboard.put("C", "2", ChessColorEnum.BLACK);
-        System.out.println(chessboard.print());
+    void aroundPutTest() {
+        System.out.println(chessboard.put("C", "01", ChessColorEnum.WHITE));
+        System.out.println();
+        System.out.println(chessboard.put("C", "03", ChessColorEnum.WHITE));
+        System.out.println();
+        System.out.println(chessboard.put("B", "02", ChessColorEnum.WHITE));
+        System.out.println();
+        System.out.println(chessboard.put("C", "02", ChessColorEnum.BLACK));
+        System.out.println();
+        System.out.println(chessboard.put("D", "02", ChessColorEnum.WHITE));
+    }
+
+    @Test
+    void anglePutTest() {
+        System.out.println(chessboard.put("A", "01", ChessColorEnum.WHITE));
+        System.out.println(chessboard.put("A", "00", ChessColorEnum.BLACK));
+        System.out.println(chessboard.put("B", "00", ChessColorEnum.WHITE));
+
     }
 
 }

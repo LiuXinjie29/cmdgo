@@ -5,10 +5,12 @@ package go;
  * @Author: LiuXinjie
  */
 public class NullChess extends Chess{
-    NullChess() {
+    NullChess(int x, int y) {
+        this.xAxis = x;
+        this.yAxis = y;
         this.color = ChessColorEnum.NULL;
     }
-    public static NullChess build() {
-        return new NullChess();
+    public static NullChess build(int x, int y) {
+        return new NullChess(x, y);
     }
 }
