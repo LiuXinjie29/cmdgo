@@ -52,7 +52,7 @@ public class Chessboard {
 
     //todo 待把这些RuntimeException改为可控制的Exception
     String put(String x, String y, ChessColorEnum color) {
-        int xAxis = (char) (x.charAt(0) - 'A');
+        int xAxis = (char) (x.toUpperCase(Locale.ROOT).charAt(0) - 'A');
         int yAxis = Integer.parseInt(y);
         if (!(chessboard[xAxis][yAxis] instanceof NullChess)) {
             throw new RuntimeException("the axis already exists a chess");

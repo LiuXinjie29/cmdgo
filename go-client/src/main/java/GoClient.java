@@ -9,11 +9,11 @@ import java.net.Socket;
  * @since: 2023/4/7.
  * @Author: LiuXinjie
  */
-public class EchoClient {
+public class GoClient {
 
     private final Socket mSocket;
 
-    public EchoClient(String host, int port) throws IOException {
+    public GoClient(String host, int port) throws IOException {
         // 创建 socket 并连接服务器
         mSocket = new Socket(host, port);
     }
@@ -28,7 +28,6 @@ public class EchoClient {
         int n;
         while ((n = System.in.read(buffer)) > 0) {
             out.write(buffer, 0, n);
-            out.flush();
         }
     }
 
@@ -49,7 +48,7 @@ public class EchoClient {
     public static void main(String[] argv) {
         try {
             // 由于服务端运行在同一主机，这里我们使用 localhost
-            EchoClient client = new EchoClient("localhost", 9877);
+            GoClient client = new GoClient("localhost", 32230);
             client.run();
         } catch (IOException e) {
             e.printStackTrace();
