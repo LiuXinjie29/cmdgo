@@ -58,6 +58,10 @@ public class GoServer {
         //todo 待优化
         while (in.read(buffer) > 0) {
             String command = new String(buffer).trim();
+            /*
+            todo 应该改成 订阅模式，棋盘有内容输出后马上返回
+            Q1: 创建和加入时是不用订阅的，如何只保证在加入棋盘后订阅
+             */
             String result = CommandRunner.runCommand(player, command);
             out.write(result.getBytes());
         }
