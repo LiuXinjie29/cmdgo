@@ -1,10 +1,15 @@
 package server;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import go.ChessColorEnum;
+import go.Chessboard;
+import go.Player;
+import org.apache.commons.io.IOUtils;
+import server.command.DropCommandRunner;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * @since: 2023/4/7.
@@ -13,6 +18,8 @@ import java.net.Socket;
 public class EchoServer {
 
     private final ServerSocket mServerSocket;
+
+    private static Chessboard chessboard = Chessboard.buildQuadrate(5);
 
     public EchoServer(int port) throws IOException {
         // 1. 创建一个 ServerSocket 并监听端口 port
@@ -29,11 +36,21 @@ public class EchoServer {
         // 3. 使用 socket 进行通信 ...
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
+
+        DropCommandRunner dropCommandRunner = new DropCommandRunner(Player.join("glb", chessboard, ChessColorEnum.BLACK));
+
         byte[] buffer = new byte[1024];
         int n;
         while ((n = in.read(buffer)) > 0) {
-            out.write(buffer, 0, n);
+            String command = new String(buffer).trim();
+            System.out.println(command);
+            String result = dropCommandRunner.execute(command);
+            System.out.println(result);
+            System.out.println(Arrays.toString(result.getBytes()));
+            out.write(result.getBytes(), 0, n);
         }
+
+
     }
 
 

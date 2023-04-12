@@ -13,7 +13,7 @@ public class Player {
 
     private ChessColorEnum chessColorEnum;
 
-    static Player join(String name, Chessboard chessboard, ChessColorEnum chessColorEnum) {
+    public static Player join(String name, Chessboard chessboard, ChessColorEnum chessColorEnum) {
         Player player = new Player();
         player.name = name;
         player.chessboard = chessboard;
@@ -21,7 +21,7 @@ public class Player {
         return player;
     }
 
-    String drop(String assemblyXY) {
+    public String drop(String assemblyXY) {
         return this.chessboard.put(assemblyXY, this.chessColorEnum);
     }
 

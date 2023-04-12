@@ -40,7 +40,7 @@ public class Chessboard {
         }
     }
 
-    static Chessboard buildQuadrate(Integer length) {
+    public static Chessboard buildQuadrate(Integer length) {
         return build(length, length);
     }
 
