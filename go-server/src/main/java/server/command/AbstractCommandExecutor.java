@@ -1,18 +1,27 @@
 package server.command;
 
+import go.Player;
+
 /**
  * @since: 2023/4/11.
  * @Author: LiuXinjie
  */
-public abstract class AbstractCommandRunner implements CommandRunner {
+public abstract class AbstractCommandExecutor implements CommandExecutor {
 
-    private final static String COMMAND_SEPARATOR = ":";
+    protected Player player;
+
+    private final String commandHead;
+
+    protected AbstractCommandExecutor(Player player, String commandHead) {
+        this.player = player;
+        this.commandHead = commandHead;
+    }
 
     @Override
     public String execute(String command) {
         String[] commandArray = command.split(COMMAND_SEPARATOR);
 
-        if (!command().equals(commandArray[0])) {
+        if (!commandHead.equals(commandArray[0])) {
             return "unknown command";
         }
         return doExecute(commandArray[1]);
@@ -20,5 +29,4 @@ public abstract class AbstractCommandRunner implements CommandRunner {
 
     protected abstract String doExecute(String commandContent);
 
-    protected abstract String command();
 }

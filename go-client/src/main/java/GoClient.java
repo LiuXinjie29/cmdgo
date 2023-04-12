@@ -25,9 +25,12 @@ public class GoClient {
 
         OutputStream out = mSocket.getOutputStream();
         byte[] buffer = new byte[1024];
-        int n;
-        while ((n = System.in.read(buffer)) > 0) {
-            out.write(buffer, 0, n);
+
+        //todo 找到一个优雅的方式刷新buffer
+        while (System.in.read(buffer) > 0) {
+            out.write(buffer);
+            System.out.println("send:" + new String(buffer));
+            buffer = new byte[1024];
         }
     }
 
@@ -38,6 +41,7 @@ public class GoClient {
             int n;
             while ((n = in.read(buffer)) > 0) {
                 System.out.println(IOUtils.toString(buffer));
+                buffer = new byte[1024];
             }
         } catch (IOException e) {
             e.printStackTrace();

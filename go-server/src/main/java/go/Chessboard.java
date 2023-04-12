@@ -1,12 +1,24 @@
 package go;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @since: 2023/4/10.
  * @Author: LiuXinjie
  */
 public class Chessboard {
+
+    //todo 想办法解决问题： 当所有人都离开棋盘后，棋盘不会被回收，怎么感知到所有人都离开了并从map中remove？
+    private final static Map<String, Chessboard> CHESSBOARD_MAP = new ConcurrentHashMap<>();
+
+    //棋盘号 用于替代房间号
+    private String chessboardNumber;
+
+    //todo 保证这个List里永远都是黑先出队，即黑在第一位
+    private Deque<ChessColorEnum> leftColor = new LinkedList<>(Stream.of(ChessColorEnum.BLACK, ChessColorEnum.WHITE).collect(Collectors.toList()));
 
     //气Map
     private final Map<String, Set<String>> qiMap = new HashMap<>();
@@ -23,21 +35,27 @@ public class Chessboard {
 
     private Chess[][] chessboard;
 
+    private ChessColorEnum last = ChessColorEnum.NULL;
+
     public static Chessboard build(Integer length, Integer width) {
         Chessboard chessboard = new Chessboard();
         chessboard.length = length;
         chessboard.width = width;
-        initChessboard(chessboard);
+        chessboard.chessboard = createBlankChessBoard(chessboard.length, chessboard.width);
+        //todo uuid可以改为短一点的
+        chessboard.chessboardNumber = UUID.randomUUID().toString();
+        CHESSBOARD_MAP.put(chessboard.chessboardNumber, chessboard);
         return chessboard;
     }
 
-    private static void initChessboard(Chessboard chessboard) {
-        chessboard.chessboard = new Chess[chessboard.length][chessboard.width];
-        for (int i = 0; i < chessboard.length; i++) {
-            for (int j = 0; j < chessboard.width; j++) {
-                chessboard.chessboard[i][j] = NullChess.build(i, j);
+    private static Chess[][] createBlankChessBoard(int length, int width) {
+        Chess[][] chessboard = new Chess[length][width];
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < width; j++) {
+                chessboard[i][j] = NullChess.build(i, j);
             }
         }
+        return chessboard;
     }
 
     public static Chessboard buildQuadrate(Integer length) {
@@ -46,18 +64,21 @@ public class Chessboard {
 
     String put(String assemblyXY, ChessColorEnum chessColorEnum) {
         String[] split = assemblyXY.split(XY_SEPARATOR);
-        if (split.length != 2) throw new RuntimeException("wrong axis string");
+        if (split.length != 2) return "wrong axis string";
         return put(split[0], split[1], chessColorEnum);
     }
 
-    //todo 待把这些RuntimeException改为可控制的Exception
-    String put(String x, String y, ChessColorEnum color) {
+    String put(String x, String y, ChessColorEnum chessColor) {
+        if (last.equals(chessColor)) {
+            return "not your turn";
+        }
+
         int xAxis = (char) (x.toUpperCase(Locale.ROOT).charAt(0) - 'A');
         int yAxis = Integer.parseInt(y);
         if (!(chessboard[xAxis][yAxis] instanceof NullChess)) {
-            throw new RuntimeException("the axis already exists a chess");
+            return "the axis already exists a chess";
         }
-        Chess curChess = Chess.build(xAxis, yAxis, color);
+        Chess curChess = Chess.build(xAxis, yAxis, chessColor);
 
         List<Chess>[] aroundSortList = getAroundSortList(curChess);
 
@@ -65,7 +86,7 @@ public class Chessboard {
 
         if (currentQi.isEmpty() && !haveDeadEnemy(aroundSortList[2], curChess)) {
             //判断对方是否有子可提，若有，则提移除对方无气的棋子，落子
-            throw new RuntimeException("you can't put chess at here");
+            return "you can't put chess at here";
         }
 
         //没有同色的邻居，新建邻居组存储，同时存储该邻居组的气
@@ -130,6 +151,7 @@ public class Chessboard {
             }
         }
         chessboard[xAxis][yAxis] = curChess;
+        last = chessColor;
         return this.print();
     }
 
@@ -272,4 +294,20 @@ public class Chessboard {
         return chess.getChessColor() + "_" + UUID.randomUUID();
     }
 
+    ChessColorEnum pickUpColor() {
+        return leftColor.poll();
+    }
+
+    boolean putDownColor(ChessColorEnum chessColorEnum) {
+        return leftColor.offer(chessColorEnum);
+    }
+
+
+    public static Map<String, Chessboard> ChessboardMap() {
+        return CHESSBOARD_MAP;
+    }
+
+    public String getChessboardNumber() {
+        return chessboardNumber;
+    }
 }

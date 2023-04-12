@@ -8,25 +8,40 @@ public class Player {
 
     private String name;
 
-    //todo 移出， 创建房间实体类，到时候通过房间来选择棋盘
     private Chessboard chessboard;
 
     private ChessColorEnum chessColorEnum;
 
-    public static Player join(String name, Chessboard chessboard, ChessColorEnum chessColorEnum) {
+    public static Player build(String name) {
         Player player = new Player();
         player.name = name;
-        player.chessboard = chessboard;
-        player.chessColorEnum = chessColorEnum;
         return player;
     }
 
-    public String drop(String assemblyXY) {
-        return this.chessboard.put(assemblyXY, this.chessColorEnum);
+    public String join(String chessboardNumber) {
+        Chessboard chessboard = Chessboard.ChessboardMap().get(chessboardNumber);
+        if (chessboard == null) {
+            return "unknown chessboard";
+        }
+        if (this.chessboard == chessboard) return "you already in this chessboard";
+        quit();
+        this.chessboard = chessboard;
+        this.chessColorEnum = this.chessboard.pickUpColor();
+        return chessboard.print();
     }
 
-    String drop(String x, String y) {
-        return this.chessboard.put(x, y, this.chessColorEnum);
+    public String quit() {
+        if (this.chessboard == null) {
+            return "quit success";
+        }
+        chessboard.putDownColor(this.chessColorEnum);
+        chessboard = null;
+        return "quit success";
+    }
+
+    public String drop(String assemblyXY) {
+        if (this.chessboard == null) return "please create/join a chessboard firstly";
+        return this.chessboard.put(assemblyXY, this.chessColorEnum);
     }
 
 }

@@ -1,9 +1,7 @@
 package server;
 
-import go.ChessColorEnum;
-import go.Chessboard;
 import go.Player;
-import server.command.DropCommandRunner;
+import server.command.CommandRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,27 +25,20 @@ public class GoServer {
         }
     }
 
-    private static Chessboard chessboard = Chessboard.buildQuadrate(5);
-
-    static {
-        try {
-            serverSocket = new ServerSocket(32230);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void start() throws IOException {
         System.out.println("server start");
         while (true) {
             Socket clientSocket = serverSocket.accept();
             System.out.println("Accepted connection from " + clientSocket);
-
+            Player curPlayer = Player.build(String.valueOf(clientSocket.getPort()));
+            //当前socket 即为一个用户
+            //等待用户发送信息，进行对应的操作
+            //响应回需要的信息
             // 创建一个新的线程来处理与该客户端的通信
             Thread thread = new Thread(() -> {
                 try {
                     // 处理客户端连接
-                    handleClient(clientSocket);
+                    handleClient(clientSocket, curPlayer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -57,18 +48,17 @@ public class GoServer {
     }
 
 
-    private void handleClient(Socket socket) throws IOException {
+    private void handleClient(Socket socket, Player player) throws IOException {
         // 3. 使用 socket 进行通信 ...
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 
-        DropCommandRunner dropCommandRunner = new DropCommandRunner(Player.join("glb", chessboard, ChessColorEnum.BLACK));
 
         byte[] buffer = new byte[1024];
+        //todo 待优化
         while (in.read(buffer) > 0) {
             String command = new String(buffer).trim();
-            System.out.println(command);
-            String result = dropCommandRunner.execute(command);
+            String result = CommandRunner.runCommand(player, command);
             out.write(result.getBytes());
         }
     }
