@@ -20,7 +20,7 @@ public class CommandRunner {
         } else if (commandType.equals(CREATE)) {
             return new CreateCommandExecutor(player).execute(command);
         } else {
-            return "unknown command";
+            return new UnknownCommandExecutor(player).execute(command);
         }
     }
 }
