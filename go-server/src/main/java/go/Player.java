@@ -42,8 +42,8 @@ public class Player {
             return "quit success";
         }
         chessboard.putDownColor(this.chessColorEnum);
-        chessboard = null;
         chessboard.getPlayers().remove(this);
+        chessboard = null;
         return "quit success";
     }
 
