@@ -35,6 +35,8 @@ public class Chessboard {
 
     private Chess[][] chessboard;
 
+    private List<Player> players = new ArrayList<>(2);
+
     private ChessColorEnum last = ChessColorEnum.NULL;
 
     public static Chessboard build(Integer length, Integer width) {
@@ -309,5 +311,9 @@ public class Chessboard {
 
     public String getChessboardNumber() {
         return chessboardNumber;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 }

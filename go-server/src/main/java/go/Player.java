@@ -1,5 +1,8 @@
 package go;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
 /**
  * @since: 2023/4/10.
  * @Author: LiuXinjie
@@ -11,6 +14,8 @@ public class Player {
     private Chessboard chessboard;
 
     private ChessColorEnum chessColorEnum;
+
+    private BlockingQueue<String> announcementQueue = new LinkedBlockingDeque<>();
 
     public static Player build(String name) {
         Player player = new Player();
@@ -27,6 +32,8 @@ public class Player {
         quit();
         this.chessboard = chessboard;
         this.chessColorEnum = this.chessboard.pickUpColor();
+        //todo 写的很烂 有时间可以整理下这部分逻辑
+        chessboard.getPlayers().add(this);
         return chessboard.print();
     }
 
@@ -36,6 +43,7 @@ public class Player {
         }
         chessboard.putDownColor(this.chessColorEnum);
         chessboard = null;
+        chessboard.getPlayers().remove(this);
         return "quit success";
     }
 
@@ -44,4 +52,15 @@ public class Player {
         return this.chessboard.put(assemblyXY, this.chessColorEnum);
     }
 
+    public String getNewestAnnouncement() {
+        return announcementQueue.poll();
+    }
+
+    public boolean putNewestAnnouncement(String content) {
+        return announcementQueue.offer(content);
+    }
+
+    public Chessboard getChessboard() {
+        return chessboard;
+    }
 }

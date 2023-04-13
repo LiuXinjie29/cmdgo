@@ -1,5 +1,6 @@
 package server;
 
+import com.sun.deploy.util.StringUtils;
 import go.Player;
 import server.command.CommandRunner;
 
@@ -8,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Objects;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * @since: 2023/4/12.
@@ -52,8 +56,19 @@ public class GoServer {
         // 3. 使用 socket 进行通信 ...
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
-
-
+        BlockingDeque<String> strings = new LinkedBlockingDeque<>();
+        new Thread(() -> {
+            while (true) {
+                try {
+                    String newestAnnouncement = player.getNewestAnnouncement();
+                    if (newestAnnouncement != null && !Objects.equals(newestAnnouncement, "")) {
+                        out.write(newestAnnouncement.getBytes());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
         byte[] buffer = new byte[1024];
         //todo 待优化
         while (in.read(buffer) > 0) {
@@ -62,8 +77,7 @@ public class GoServer {
             todo 应该改成 订阅模式，棋盘有内容输出后马上返回
             Q1: 创建和加入时是不用订阅的，如何只保证在加入棋盘后订阅
              */
-            String result = CommandRunner.runCommand(player, command);
-            out.write(result.getBytes());
+            CommandRunner.runCommand(player, command);
         }
     }
 

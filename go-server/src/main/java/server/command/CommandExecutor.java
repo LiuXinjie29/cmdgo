@@ -12,6 +12,9 @@ public interface CommandExecutor {
 
     String CREATE = "create";
 
+    String UNKNOWN = "UNKNOWN";
+
+
     String COMMAND_SEPARATOR = ":";
 
     String execute(String command);

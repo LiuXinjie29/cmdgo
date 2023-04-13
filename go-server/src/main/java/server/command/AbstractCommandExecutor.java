@@ -22,9 +22,20 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
         String[] commandArray = command.split(COMMAND_SEPARATOR);
 
         if (!commandHead.equals(commandArray[0])) {
-            return "unknown command";
+            String unknown = "unknown command";
+            player.putNewestAnnouncement(unknown);
+            return unknown;
         }
-        return doExecute(commandArray[1]);
+        String result = doExecute(commandArray[1]);
+        if (player.getChessboard() != null) {
+            for (Player curPlayer : player.getChessboard().getPlayers()) {
+                curPlayer.putNewestAnnouncement(result);
+            }
+        } else {
+            player.putNewestAnnouncement(result);
+        }
+
+        return result;
     }
 
     protected abstract String doExecute(String commandContent);
