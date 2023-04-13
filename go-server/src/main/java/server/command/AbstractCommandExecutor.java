@@ -20,12 +20,6 @@ public abstract class AbstractCommandExecutor implements CommandExecutor {
     @Override
     public String execute(String command) {
         String[] commandArray = command.split(COMMAND_SEPARATOR);
-
-        if (!commandHead.equals(commandArray[0])) {
-            String unknown = "unknown command";
-            player.putNewestAnnouncement(unknown);
-            return unknown;
-        }
         String result = doExecute(commandArray[1]);
         if (player.getChessboard() != null) {
             for (Player curPlayer : player.getChessboard().getPlayers()) {
