@@ -1,5 +1,6 @@
 package go;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -281,7 +282,7 @@ public class Chessboard {
             temp = null;
         }
         content.add(xAxis.toString());
-        return content.toString();
+        return LocalDateTime.now().toString() + "\n" + content.toString();
     }
 
     private String beautyNumber(int i) {

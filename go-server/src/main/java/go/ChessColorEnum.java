@@ -6,7 +6,7 @@ package go;
  */
 public enum ChessColorEnum {
     NULL("+"),
-    WHITE("*"),
+    WHITE("@"),
     BLACK("#")
     ;
 
